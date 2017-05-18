@@ -1,0 +1,33 @@
+<script id="TodoMainView" type="text/html">
+<div class="TodoMainView">
+	<header>todos</header>	
+	<section class="todos-card">		
+		<header>
+			<input class="new-todo">
+		</header>
+		<section class="items">							
+		</section>
+		<footer>
+			<div class="info"><!-- todo: implement item left --></div>
+			<div class="filter-bar">
+				<a class="filter active" href="#todo">All</a>
+				<a class="filter" href="#todo/active">Active</a>
+				<a class="filter" href="#todo/completed">Completed</a>
+			</div>
+		</footer>
+	</section>
+</div>
+</script>
+
+<script id="TodoMainView-todo-items" type="text/html">
+{{#each items}}
+<div class="todo-item {{echo done 'todo-done'}}" data-entity="Todo" data-entity-id="{{id}}">
+	<div class="ctrl-check"></div>
+	<label class="dx dx-subject">{{subject}}</label>
+</div>
+{{/each}}
+</script>
+
+<script id="TodoMainView-input-edit" type="text/html">
+<input type="text" name="newSubject" class="dx" value="{{subject}}">
+</script>

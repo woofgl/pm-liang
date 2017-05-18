@@ -21,3 +21,5 @@ web/css/*.css
 # Ignore Sublime Text files
 *.sublime-project
 *.sublime-workspace
+
+data/

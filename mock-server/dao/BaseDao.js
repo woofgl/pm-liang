@@ -1,56 +1,58 @@
 'use strict';
 const fs = require('fs-extra-plus');
-var dataPath = "./server/data/";
+const path = require('path');
+var dataPath = "../../data/";
 
 class BaseDao{
 
 	constructor(entity){
 		this._entity = entity;
 		this._seq = 1;
-		var dao = this;
 	}
 
-	get(key){
-		var data = getJsonData.call(view);
+	async get(key){
+		var data = await getJsonData.call(this);
 		return data[key];
 	}
 
 	// create an entity, and return id.
-	create(dataEntity){
-		var data = getJsonData.call(view);
+	async create(dataEntity){
+		var data = await getJsonData.call(this);
 		var entity = Object.assign({}, dataEntity);
 		entity["id"] = getSeq.call(this);
 		data[entity.id] = entity;
-		setJsonData.call(view, jsonData);
+		await setJsonData.call(this, data);
 		return entity.id;
 	}
 
-	update(dataEntity){
-		var entity = Object.assign({}, dataEntity);
-		if(entity.id){
-			var data = getJsonData.call(view);
-			if(data[entity.id]){
-				entity = Object.assign({}, data[entity.id], entity);
-				setJsonData.call(view, jsonData);
+	async update(id, dataEntity){
+		var entity = null;
+		if(id){
+			var data = await getJsonData.call(this);
+			if(data[id]){
+				entity = Object.assign({id: id}, data[id], dataEntity);
+				data[id] = entity;
+				setJsonData.call(this, data);
 			}
 		}
-		return entity.id;
+		return entity;
 	}
 
-	delete(key){
+	async delete(key){
 		if(key){
-			var data = getJsonData.call(view);
+			var data = await getJsonData.call(this);
 			if(data[key]){
 				delete data[key];
+				await setJsonData.call(this, data);
 			}
 		}
 	}
 
-	list(){
-		var data = getJsonData.call(view);
+	async list(){
+		var data = await getJsonData.call(this);
 		var arr = [];
-		for(let id of data){
-		    arr.push(data[id]);
+		for(let id in data){
+			arr.push(data[id]);
 		}
 		return arr;
 	}
@@ -63,18 +65,25 @@ function getSeq(){
 }
 
 async function getJsonData(){
-	let data = await fs.readFile(getJsonFile.call(this), 'utf-8');
-	var jsonObject = JSON.parse(data);
+	var jsonObject = {};
+	try{
+		let data = await fs.readFile(getJsonFile.call(this), 'utf8');
+		jsonObject = JSON.parse(data);
+	}catch(e){
+	}
 	return jsonObject;
 }
 
 async function setJsonData(jsonObject){
 	let jsonData = JSON.stringify(jsonObject);
-	await fs.writeFile(getJsonFile.call(this), jsonData, "utf8");
+	var file = getJsonFile.call(this);
+	await fs.writeFile(file, jsonData, "utf8");
 }
 
 function getJsonFile(){
-	return dataPath + "data-" + this.entity + ".json";
+	var filePath = path.join(__dirname, dataPath);
+	fs.ensureDirSync(filePath);
+	return path.join(__dirname, dataPath + "data-" + this._entity + ".json");
 }
 
 // --------- /BaseDao Utilities --------- //

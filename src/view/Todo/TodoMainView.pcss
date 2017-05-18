@@ -1,0 +1,158 @@
+@import "../../pcss/utils.pcss";
+
+.TodoMainView{
+	flex: 1;
+	display: flex; /* We start the flex box at the body */
+	flex-direction: column;
+	align-items: center;
+	
+	> header{
+		color: rgba(175, 47, 47, 0.15);
+		font-size: 100px;
+		text-align: center;
+		font-weight: 300;
+	}	
+
+	.todos-card{
+		background: #fff;
+		width: 800px;
+		self-align: middle;
+		
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 
+							0 25px 50px 0 rgba(0, 0, 0, 0.1);
+							
+		input.new-todo{
+			background: rgba(0, 0, 0, 0.003);
+			width: 100%;
+
+			font-size: 14px;
+			color: $txt-light;
+			font-weight: 100;
+			font-size: 18px;
+			letter-spacing: .1em;
+
+			font-size: 24px;
+			line-height: 1.4em;
+			box-shadow: inset 0 -2px 1px rgba(0,0,0,0.03);
+			border: none;
+			outline: none;
+			padding: 16px 16px 16px 60px;
+		} /* input.new-todo */
+
+		.items{
+
+			/* Outermost : Todo */
+			.todo-item{
+				font-size: 24px;
+				color: $txt-light;
+				font-weight: 100;
+				letter-spacing: .1em;
+
+				display: flex;
+				flex-direction: row;
+
+				.ctrl-check{
+					position: absolute;
+					border: solid 1px #ddd;
+					width: 32px;
+					height: 32px;
+					border-radius: 32px;
+					margin: 15px;
+				}
+
+				label, input{
+					padding: 15px 60px 15px 64px;
+				}
+
+				label{
+					cursor: pointer;
+					width: 100%;
+					display: block;				
+				}
+
+				input{
+					width: 100%;
+					font-size: inherit;
+					font-weight: inherit;
+					letter-spacing: inherit;
+					font-family: inherit;
+					color: inherit;
+					border: none;
+					outline: none;
+				}
+
+				/* State: When a todo is done */
+				/* Note: The "done" state as other states is at the outermost div of this entity representation 
+								 (i.e. at the .todo-item). Given the cascading nature of CSS, this allow to avoid 
+								 redundancy while allow sub elements to be styled approprietaly. 
+				*/ 
+				&.todo-done{
+					.ctrl-check{
+						background-color: green;
+
+						&::after{
+							content:"";
+							@mixin fitparent;
+							border: solid 2px #fff;
+							border-radius: 16px;
+							margin: 3px;
+						}
+					}
+					label{
+						text-decoration: line-through;
+					}
+				}
+
+				/* State: Editing (when editing a todod) */
+				&.editing{
+					label{
+						display: none;
+					}
+
+					input{
+						
+					}
+				}
+
+			}
+		} /* .item */
+
+		footer{
+			position: relative;
+			height: 32px;
+			
+			font-size: 14px;
+			color: $txt-light;
+			font-weight: 100;
+			font-size: 14px;
+			letter-spacing: .1em;
+			.info{
+				padding-top: 6px;
+				padding-left: 16px;	
+			}
+
+			.filter-bar{
+				@mixin fitparent;
+				padding-top: 6px;			
+				text-align: center;
+
+				.filter{
+					display: inline;
+					color: inherit;
+					margin: 3px;
+					padding: 3px 7px;
+					text-decoration: none;
+					border: 1px solid transparent;
+					border-radius: 3px;								
+				}
+
+				.filter.active{
+					border: 1px solid rgba(175, 47, 47, 0.2)
+				}
+			}
+		}	/* footer */
+
+	} /* .todo-card */
+
+
+}
