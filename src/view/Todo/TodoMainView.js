@@ -242,7 +242,6 @@ function refreshList(){
 		filters = {done: true};
 		break;
 	}
-
 	todoDso.list({filters: filters}).then(function(todos){
 		var html = render("TodoMainView-todo-items",{items:todos});
 		d.first(view.el,".items").innerHTML = html;

@@ -56,7 +56,7 @@ DsoRest.prototype.list = function(opts){
 	var type = this._type;
 
 	// TODO: need to add the filtering support
-	return ajax.get("/api/"+type.toLowerCase()+"/list", opts);
+	return ajax.get("/api/"+type.toLowerCase()+"/list", {opts: JSON.stringify(opts)});
 };
 
 DsoRest.prototype.first = function(opts){

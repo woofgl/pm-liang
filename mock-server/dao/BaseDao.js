@@ -48,15 +48,30 @@ class BaseDao{
 		}
 	}
 
-	async list(){
+	async list(filters){
 		var data = await getJsonData.call(this);
-		var arr = [];
-		for(let id in data){
-			arr.push(data[id]);
+		var tmpList = [];
+
+		var item;
+
+		// get the eventual filters
+		if (filters){
+			// make sure it is an array of filter
+			filters = (filters instanceof Array)?filters:[filters];
 		}
-		return arr;
+
+		for (var k in data){
+			item = data[k];
+			// add it to the list if no filters or it passes the filters
+			if (!filters || passFilter(item, filters)){
+				tmpList.push(item);
+			}
+		}
+
+		return tmpList;
 	}
 }
+module.exports = BaseDao;
 
 // --------- BaseDao Utilities --------- //
 
@@ -88,5 +103,57 @@ function getJsonFile(){
 
 // --------- /BaseDao Utilities --------- //
 
-module.exports = BaseDao;
 
+
+var filterDefaultOp = "=";
+// Important: filters must be an array
+function passFilter(item, filters){
+	
+	var pass;
+
+	// each condition in a filter are OR, so, first match we can break out.
+	// A condition item is a js object, and each property is a AND
+	var i = 0, l = filters.length, cond, k, v, propName, op, itemV;
+	for (; i < l; i++){
+		pass = true;
+
+		cond = filters[i];
+		for (k in cond){
+			// TODO: For now, just support the simple case where key is the property name
+			//       Will need to add support for the operator in the key name
+			propName = k;
+			op = filterDefaultOp; // TODO: will need to get it for key
+
+			// value to match
+			v = cond[k];
+
+			// item value
+			itemV = item[propName];
+
+
+			switch(op){
+			case "=":
+				// special case if v is null (need to test undefined)
+				if (v === null){
+					pass = pass && (itemV == null);
+				}else{
+					pass = pass && (v === itemV);	
+				}
+				
+				break;				
+			}
+
+			// if one fail, break at false, since within an object, we have AND
+			if (!pass){
+				break;
+			}
+		}
+
+		// if one of those condition pass, we can return true since within the top filter array we have OR.
+		if (pass){
+			break;
+		}
+	}
+
+	return pass;
+}

@@ -15,16 +15,13 @@ routes.push({
 	handler: {
 		async: async function (request, reply) {
 			var todoDao = daos.todo;
-			var name = request.url.query.name;
-			var list = await todoDao.list();
-			var results = [];
-			for(var i = 0; i < list.length; i++){
-				var todoName = list[i].name || "";
-				if(!name || todoName.indexOf(name) > -1){
-					results.push(list[i]);
-				}
+			var filters = null;
+			if(request.url.query.opts){
+				var opts = JSON.parse(request.url.query.opts);
+				filters = opts.filters;
 			}
-			reply(results);
+			var list = await todoDao.list(filters);
+			reply(list);
 		}
 	}
 });
