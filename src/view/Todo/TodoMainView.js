@@ -69,7 +69,7 @@ d.register("TodoMainView",{
 		}, 
 
 		// double clicking on a label makes it editable
-		"dblclick; label": function(evt){
+		"dblclick; .editable": function(evt){
 			editTodo.call(this, utils.entityRef(evt.target, "Todo"));
 		}, 
 
@@ -244,7 +244,7 @@ function refreshList(){
 	}
 	todoDso.list({filters: filters}).then(function(todos){
 		var html = render("TodoMainView-todo-items",{items:todos});
-		d.first(view.el,".items").innerHTML = html;
+		d.first(view.el,".items .items-con").innerHTML = html;
 	});	
 }
 // --------- /Private View Methods --------- //

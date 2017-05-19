@@ -5,7 +5,15 @@
 		<header>
 			<input class="new-todo">
 		</header>
-		<section class="items">							
+		<section class="items">
+			<div class="ui-table">
+				<div class="ui-thead">
+					<div></div>
+					<div>Subject</div>
+				</div>
+				<div class="ui-tbody items-con">
+				</div>
+			</div>				
 		</section>
 		<footer>
 			<div class="info"><!-- todo: implement item left --></div>
@@ -21,9 +29,9 @@
 
 <script id="TodoMainView-todo-items" type="text/html">
 {{#each items}}
-<div class="todo-item {{echo done 'todo-done'}}" data-entity="Todo" data-entity-id="{{id}}">
+<div class="ui-tr todo-item {{echo done 'todo-done'}}" data-entity="Todo" data-entity-id="{{id}}">
 	<div class="ctrl-check"></div>
-	<label class="dx dx-subject">{{subject}}</label>
+	<label class="dx dx-subject editable">{{subject}}</label>
 </div>
 {{/each}}
 </script>
