@@ -9,6 +9,7 @@
 			<div class="ui-table">
 				<div class="ui-thead">
 					<div></div>
+					<div></div>
 					<div>Subject</div>
 				</div>
 				<div class="ui-tbody items-con">
@@ -30,6 +31,7 @@
 <script id="TodoMainView-todo-items" type="text/html">
 {{#each items}}
 <div class="ui-tr todo-item {{echo done 'todo-done'}}" data-entity="Todo" data-entity-id="{{id}}">
+	<div class="drag-holder"><i>{{{symbol "ico-chevron-right"}}}</i></div>
 	<div class="ctrl-check"></div>
 	<label class="dx dx-subject editable">{{subject}}</label>
 </div>

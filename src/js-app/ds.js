@@ -10,7 +10,6 @@
 // ds("Task").create()
 
 // ds.register("_fallback_",{create, update, remove, ...})
-// ds.register("Task",)
 
 // dso by name
 var dsoDic = {};

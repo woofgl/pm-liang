@@ -15,12 +15,11 @@ routes.push({
 	handler: {
 		async: async function (request, reply) {
 			var todoDao = daos.todo;
-			var filters = null;
+			var opts = {};
 			if(request.url.query.opts){
-				var opts = JSON.parse(request.url.query.opts);
-				filters = opts.filters;
+				opts = JSON.parse(request.url.query.opts);
 			}
-			var list = await todoDao.list(filters);
+			var list = await todoDao.list(opts);
 			reply(list);
 		}
 	}
@@ -76,6 +75,21 @@ routes.push({
 			var todoDao = daos.todo;
 			var entityId = todoDao.delete(request.payload.id);
 			reply({id: entityId});
+		}
+	}
+});
+
+routes.push({
+	method: 'POST',
+	path: baseURI + "/todo/updateRank", 
+	handler: {
+		async: async function(request, reply){
+			var todoDao = daos.todo;
+			var items = JSON.parse(request.payload.items);
+			for(let item of items){
+				await todoDao.update(item.id * 1, item);
+			}
+			reply();
 		}
 	}
 });

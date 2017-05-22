@@ -63,7 +63,6 @@ d.register("TodoMainView",{
 
 			// we toggle the done value (yes, from the UI state, as this is what the user intent)
 			var done = !entityRef.el.classList.contains("todo-done");
-
 			// we update the todo vas the dataservice API. 
 			todoDso.update(entityRef.id, {done:done});			
 		}, 
@@ -82,7 +81,7 @@ d.register("TodoMainView",{
 			//            Ohterwise, we might do the remove inputEl twice with the blur event flow of this element.
 			if (entityRef.el.classList.contains("editing")){
 				cancelEditing.call(view, entityRef);	
-			}			
+			}	
 		}, 
 
 		// when user type enter or tab in the todo-item input
@@ -114,14 +113,36 @@ d.register("TodoMainView",{
 				break;
 			}
 		},
+
+		"mousedown; .todo-item .drag-holder": function(evt){
+			var view = this;
+			view._dragHolderEl = d.closest(evt.target, ".drag-holder");
+			view._dragTr = d.closest(view._dragHolderEl, ".ui-tr");
+			view._dragTr.classList.add("dragging");
+		}
 		// --------- /todo-item UI Events --------- //		
 	}, // .events
+
+	docEvents: {
+		"mousemove": function(){
+			var view = this;
+			if(view._dragHolderEl){
+				
+			}
+		},
+
+		"mouseup": function(){
+			var view = this;
+			if(view._dragHolderEl){
+				
+			}
+		}
+	},
 
 
 	hubEvents: {
 		"dataHub; Todo": function(data, info){
 			var view = this;
-			console.log(123);
 			refreshList.call(view);
 		}, 
 
@@ -242,9 +263,24 @@ function refreshList(){
 		filters = {done: true};
 		break;
 	}
-	todoDso.list({filters: filters}).then(function(todos){
+	todoDso.list({filters: filters, orderBy: "rank"}).then(function(todos){
 		var html = render("TodoMainView-todo-items",{items:todos});
 		d.first(view.el,".items .items-con").innerHTML = html;
 	});	
+}
+
+function updateRank(){
+	var items = [];
+	var index = 0;
+	d.all(view.el, ".todo-item").forEach(function(itemEl){
+		var todoEntityRef = utils.entityRef(itemEl);
+		todoEntityRef.rank = index;
+		items.push({
+			id: todoEntityRef.id,
+			rank: index
+		});
+		index++;
+	});
+	todoDso.updateRank(items);
 }
 // --------- /Private View Methods --------- //

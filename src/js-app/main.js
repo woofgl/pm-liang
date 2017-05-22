@@ -3,6 +3,7 @@ var route = require("./route.js");
 var ds = require("./ds.js");
 var DsoRest = require("./dsoRest.js");
 var ajax = require("./ajax.js");
+var DsoTodoRest = require("./dsoTodoRest.js");
 
 /**
  * This module do not externalize anything, but just start the application. 
@@ -16,6 +17,8 @@ var ajax = require("./ajax.js");
 ds.fallback(function(type){
 	return new DsoRest(type);
 });
+
+ds.register("Todo", new DsoTodoRest("Todo"));
 
 // For production, you might want to have some Entity DSO object that you would register as follow
 // ds.register("Task", new TaskDso());

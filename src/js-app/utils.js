@@ -27,7 +27,8 @@ module.exports = {
 	},
 
 
-	entityRef: entityRef
+	entityRef: entityRef,
+	inherit: inherit
 };
 
 
@@ -57,3 +58,12 @@ function entityRef(el, type){
 }
 // --------- Util APIs --------- //
 
+
+function inherit(C, P) {
+	var F = function() {
+	};
+	F.prototype = P.prototype;
+	C.prototype = new F();
+	C._super = P.prototype; 
+	C.prototype.constructor = C;
+}

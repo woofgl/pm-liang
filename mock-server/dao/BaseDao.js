@@ -48,24 +48,55 @@ class BaseDao{
 		}
 	}
 
-	async list(filters){
-		var data = await getJsonData.call(this);
-		var tmpList = [];
+	async list(opts){
+		var entityStore = await getJsonData.call(this);
+		var tmpList = [], list;
 
 		var item;
 
 		// get the eventual filters
+		var filters = (opts && opts.filters)?opts.filters:null;
 		if (filters){
 			// make sure it is an array of filter
 			filters = (filters instanceof Array)?filters:[filters];
 		}
 
-		for (var k in data){
-			item = data[k];
+
+		// first, we go through the store to build the first list
+		// NOTE: Here we do the filter here because we have to build the list anyway. 
+		//       If we had the list as storage, we will sort first, and then, filter
+		for (var k in entityStore){
+			item = entityStore[k];
 			// add it to the list if no filters or it passes the filters
 			if (!filters || passFilter(item, filters)){
 				tmpList.push(item);
 			}
+		}
+
+		// implement the sorting
+		// get the eventual orderBy
+		var orderBy = (opts && opts.orderBy)?opts.orderBy:null;
+		var orderType = (opts && opts.orderType)?opts.orderType:null;
+		tmpList.sort(function(a, b){
+			if(orderType == "desc"){
+				return a.rank > b.rank ? 1 : -1;
+			}else{
+				return a.rank < b.rank ? 1 : -1;
+			}
+		});
+
+		// extract the eventual offset, limit from the opts, or set the default
+		var offset = (opts && opts.offset)?opts.offset:0;
+		var limit = (opts && opts.limit)?opts.limit:-1; // -1 means no limit
+		
+		// Set the "lastIndex + 1" for the for loop
+		var l = (limit !== -1)?(offset + limit):tmpList.length;
+		// make sure the l is maxed out by the tmpList.length
+		l = (l > tmpList.length)?tmpList.length:l;
+
+		list = [];
+		for (var i = offset; i < l; i++){
+			list.push(Object.assign({}, tmpList[i]));
 		}
 
 		return tmpList;
