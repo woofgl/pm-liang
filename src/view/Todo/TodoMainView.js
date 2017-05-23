@@ -60,7 +60,7 @@ d.register("TodoMainView",{
 		// toggle check status
 		"click; .ctrl-check": function(evt){
 			var entityRef = utils.entityRef(evt.target, "Todo");
-
+			console.log(d.closest(evt.target, ".ui-tr"));
 			// we toggle the done value (yes, from the UI state, as this is what the user intent)
 			var done = !entityRef.el.classList.contains("todo-done");
 			// we update the todo vas the dataservice API. 
