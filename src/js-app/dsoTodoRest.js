@@ -1,3 +1,4 @@
+var d = mvdom; // global lib dependency
 var utils = require("./utils.js");
 var DsoRest = require("./dsoRest.js");
 var ajax = require("./ajax");

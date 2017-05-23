@@ -116,25 +116,73 @@ d.register("TodoMainView",{
 
 		"mousedown; .todo-item .drag-holder": function(evt){
 			var view = this;
-			view._dragHolderEl = d.closest(evt.target, ".drag-holder");
-			view._dragTr = d.closest(view._dragHolderEl, ".ui-tr");
+			view._holderTr = d.closest(evt.target, ".ui-tr");
+
+			var html = view._holderTr.outerHTML;
+			var node = document.createElement("div");
+			node.innerHTML = html;
+			view._dragTr = node.firstChild;
+			var rowsConEl = d.closest(view._holderTr, ".items-con");
+			rowsConEl.appendChild(view._dragTr);
+
+			view._dragTr.style.width = view._dragTr.clientWidth + "px";
+			view._dragTr.style.height = view._dragTr.clientHeight + "px";
 			view._dragTr.classList.add("dragging");
+
+
+			var holderOffset = getOffset.call(view, view._holderTr);
+			view._dragOpts = {
+				offsetX: evt.pageX - holderOffset.left,
+				offsetY: evt.pageY - holderOffset.top
+			};
+
+			view._dragTr.style.left = evt.pageX - view._dragOpts.offsetX + "px";
+			view._dragTr.style.top = evt.pageY- view._dragOpts.offsetY + "px";
+			view.el.classList.add("dragging");
+
+			view._holderTr.classList.add("tr-holder");
 		}
 		// --------- /todo-item UI Events --------- //		
 	}, // .events
 
 	docEvents: {
-		"mousemove": function(){
+		"mousemove": function(evt){
 			var view = this;
-			if(view._dragHolderEl){
-				
+			if(view._dragTr){
+				console.log(view._dragOpts);
+				view._dragTr.style.left = evt.pageX - view._dragOpts.offsetX + "px";
+				view._dragTr.style.top = evt.pageY- view._dragOpts.offsetY + "px";
+
+				var rowsConEl = d.closest(view._holderTr, ".items-con");
+				var rows = d.all(rowsConEl, ".todo-item:not(.dragging):not(.tr-holder)");
+				for(var i = 0; i < rows.length; i++){
+					var row = rows[i];
+					var rowOffset = getOffset.call(view, row);
+					if(evt.pageX > rowOffset.left && evt.pageY > rowOffset.top && evt.pageX < rowOffset.left + row.clientWidth && evt.pageY < rowOffset.top + row.clientHeight){
+						if(evt.pageY > rowOffset.top + row.clientHeight / 2){
+							rowsConEl.insertBefore(view._holderTr, row);
+						}else{
+							rowsConEl.insertBefore(row, view._holderTr);
+						}
+						break;
+					}
+				}
 			}
 		},
 
-		"mouseup": function(){
+		"mouseup": function(evt){
 			var view = this;
-			if(view._dragHolderEl){
-				
+			if(view._dragTr){
+				view._dragTr.style.width = "";
+				view._dragTr.style.height = "";
+				d.remove(view._dragTr);
+				updateRank.call(view);
+				view._dragTr = null;
+
+				view._holderTr.classList.remove("tr-holder");
+				view._holderTr = null;
+				view.el.classList.remove("dragging");
+				view._dragOpts = null;
 			}
 		}
 	},
@@ -270,6 +318,7 @@ function refreshList(){
 }
 
 function updateRank(){
+	var view = this;
 	var items = [];
 	var index = 0;
 	d.all(view.el, ".todo-item").forEach(function(itemEl){
@@ -282,5 +331,16 @@ function updateRank(){
 		index++;
 	});
 	todoDso.updateRank(items);
+}
+
+function getOffset(el){
+	var view = this;
+	var offset = {left: el.offsetLeft, top: el.offsetTop};
+	if(el.offsetParent != null){
+		var topOffset = getOffset.call(view, el.offsetParent);
+		offset.left += topOffset.left;
+		offset.top += topOffset.top;
+	}
+	return offset; 
 }
 // --------- /Private View Methods --------- //

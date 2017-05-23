@@ -5,6 +5,10 @@
 	display: flex; /* We start the flex box at the body */
 	flex-direction: column;
 	align-items: center;
+
+	&.dragging{
+		user-select: none;
+	}
 	
 	> header{
 		color: rgba(175, 47, 47, 0.15);
@@ -142,6 +146,13 @@
 
 				&.dragging{
 					position: absolute;
+					@mixin elev-3;
+					opacity: .5;
+				}
+
+
+				&.tr-holder{
+					opacity: .5;
 				}
 
 			}

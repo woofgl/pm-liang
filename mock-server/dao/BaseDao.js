@@ -79,9 +79,9 @@ class BaseDao{
 		var orderType = (opts && opts.orderType)?opts.orderType:null;
 		tmpList.sort(function(a, b){
 			if(orderType == "desc"){
-				return a.rank > b.rank ? 1 : -1;
-			}else{
 				return a.rank < b.rank ? 1 : -1;
+			}else{
+				return a.rank > b.rank ? 1 : -1;
 			}
 		});
 

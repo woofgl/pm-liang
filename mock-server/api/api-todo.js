@@ -89,7 +89,7 @@ routes.push({
 			for(let item of items){
 				await todoDao.update(item.id * 1, item);
 			}
-			reply();
+			reply(items);
 		}
 	}
 });
