@@ -42,9 +42,15 @@ d.register("TodoMainView",{
 			// press enter
 			if (evt.key === "Enter"){
 				var val = inputEl.value;
-				todoDso.create({subject: val}).then(function(){
-					inputEl.value = "";
-				});
+				if (val.length > 0){
+					todoDso.create({subject: val}).then(function(){
+						inputEl.value = "";
+						// send to the notification
+						d.hub("notifHub").pub("notify", {type: "info", content: "<strong>New task created:</strong> " + val});				
+					});
+				}else{
+					d.hub("notifHub").pub("notify", {type: "error", content: "<strong>ERROR:</strong> An empty task is not a task."});
+				}
 			}
 			//press tab, make editable the first item in the list
 			else if (evt.key === "Tab"){
@@ -60,11 +66,17 @@ d.register("TodoMainView",{
 		// toggle check status
 		"click; .ctrl-check": function(evt){
 			var entityRef = utils.entityRef(evt.target, "Todo");
-			console.log(d.closest(evt.target, ".ui-tr"));
+
 			// we toggle the done value (yes, from the UI state, as this is what the user intent)
 			var done = !entityRef.el.classList.contains("todo-done");
 			// we update the todo vas the dataservice API. 
-			todoDso.update(entityRef.id, {done:done});			
+			todoDso.update(entityRef.id, {done:done}).then(function(newEntity){
+				if (done){
+					d.hub("notifHub").pub("notify", {type: "info", content: "<strong>Task done:</strong> " + newEntity.subject});
+				}else{
+					d.hub("notifHub").pub("notify", {type: "warning", content: "<strong>Task undone:</strong> " + newEntity.subject});
+				}			
+			});		
 		}, 
 
 		// double clicking on a label makes it editable

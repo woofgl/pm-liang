@@ -15,6 +15,8 @@ d.register("MainView",{
 
 	postDisplay: function(){
 		var view = this; // best practice, set the view variable first. 
+		
+		d.display("NotificationView", view.el);
 	}, 
 
 	hubEvents: {
