@@ -25,6 +25,21 @@ d.register("TodoMainView",{
 	},
 
 	events: {
+		"click; .btn-edit-mode": function(evt){
+			var view = this;
+			var target = evt.selectTarget;
+			target.classList.toggle("active");
+			view.el.classList.toggle("edit-mode");
+		},
+		"click; .btn-delete": function(evt){
+			var view = this;
+			var target = evt.selectTarget;
+			var entityRef = utils.entityRef(target, "Todo");
+			var name = d.first(entityRef.el, ".dx-subject").innerText;
+			todoDso.remove(entityRef.id).then(function(){
+				d.hub("notifHub").pub("notify", {type: "info", content: "<strong>Task deleted:</strong> " + name});				
+			});
+		},
 		// all input - we disable the default Tab UI event handling, as it will be custom
 		"keydown; input": function(evt){
 			if (evt.key === "Tab"){
@@ -265,7 +280,7 @@ function editTodo(entityRef){
 
 	// create the input HTML and add it to the entity element
 	var inputHTML = render("TodoMainView-input-edit", {subject: currentSubject});
-	todoEl.insertAdjacentHTML("beforeend", inputHTML);
+	labelEl.insertAdjacentHTML("afterend", inputHTML);
 
 	// set the focus and selection on the input element
 	var inputEl = d.first(todoEl, "input");

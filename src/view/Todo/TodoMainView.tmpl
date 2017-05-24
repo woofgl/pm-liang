@@ -1,5 +1,8 @@
 <script id="TodoMainView" type="text/html">
 <div class="TodoMainView">
+	<section class="tool-bar">
+		<a class="btn-edit-mode"></a>
+	</section>
 	<section class="todos-card">		
 		<header>
 			<input class="new-todo">
@@ -10,6 +13,7 @@
 					<div></div>
 					<div></div>
 					<div>Subject</div>
+					<div class="action-col"></div>
 				</div>
 				<div class="ui-tbody items-con">
 				</div>
@@ -33,6 +37,9 @@
 	<div class="drag-holder"><i>{{{symbol "ico-chevron-right"}}}</i></div>
 	<div class="ctrl-check"></div>
 	<label class="dx dx-subject editable">{{subject}}</label>
+	<div class="action-col">
+		<div class="btn btn-delete">Delete</div>
+	</div>
 </div>
 {{/each}}
 </script>

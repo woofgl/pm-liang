@@ -10,6 +10,31 @@
 		user-select: none;
 	}
 
+	&.edit-mode{
+		.todos-card{
+			.action-col{
+				display: block;
+			}
+		}
+	}
+
+	.tool-bar{
+		align-self: flex-end;
+		height: 32px;
+		.btn-edit-mode{
+			cursor: pointer;
+			color: $color-prim;
+			&:after{
+				content: "Edit"
+			}
+			&.active{
+				&:after{
+					content: "View"
+				}
+			}
+		}
+	}
+
 	.todos-card{
 		background: #fff;
 		width: 800px;
@@ -35,6 +60,12 @@
 			outline: none;
 			padding: 16px 16px 16px 60px;
 		} /* input.new-todo */
+
+		.action-col{
+			display: none;
+			flex: none;
+			width: 96px;
+		}
 
 		.items{
 			.ui-thead{
@@ -103,6 +134,13 @@
 				i{
 					width: 24px;
 					height: 24px;
+				}
+
+				.btn{
+					font-size: 13px;
+					letter-spacing: 1px;
+					padding: 3px 6px;
+					height: auto;
 				}
 
 				/* State: When a todo is done */
