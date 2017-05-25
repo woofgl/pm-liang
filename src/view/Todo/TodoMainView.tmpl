@@ -36,7 +36,20 @@
 <div class="ui-tr todo-item {{echo done 'todo-done'}}" data-entity="Todo" data-entity-id="{{id}}">
 	<div class="drag-holder"><i>{{{symbol "ico-chevron-right"}}}</i></div>
 	<div class="ctrl-check"></div>
-	<label class="dx dx-subject editable">{{subject}}</label>
+	<label class="dx dx-subject editable" data-prop="subject" data-value="{{echo subject subject}}">
+		{{subject}}
+		<div class="tooltips">
+			<div class="tooltips-content">
+				<label class="dx dx-note editable " data-prop="note" data-value="{{echo note note}}">
+				{{#if note}}
+					{{note}}
+				{{else}}
+					Nothing
+				{{/if}}
+				</label>
+			</div>
+		</div>
+	</label>
 	<div class="action-col">
 		<div class="btn btn-delete">Delete</div>
 	</div>
@@ -45,5 +58,5 @@
 </script>
 
 <script id="TodoMainView-input-edit" type="text/html">
-<input type="text" name="newSubject" class="dx" value="{{subject}}">
+<input type="text" name="newValue" class="dx" value="{{value}}">
 </script>

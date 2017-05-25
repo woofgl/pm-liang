@@ -96,7 +96,7 @@ d.register("TodoMainView",{
 
 		// double clicking on a label makes it editable
 		"dblclick; .editable": function(evt){
-			editTodo.call(this, utils.entityRef(evt.target, "Todo"));
+			editTodo.call(this, utils.entityRef(evt.target, "Todo"), evt.selectTarget);
 		}, 
 
 		// when the todo-item input get focus out (we cancel by default)
@@ -168,7 +168,8 @@ d.register("TodoMainView",{
 			view.el.classList.add("dragging");
 
 			view._holderTr.classList.add("tr-holder");
-		}
+		},
+
 		// --------- /todo-item UI Events --------- //		
 	}, // .events
 
@@ -236,11 +237,15 @@ d.register("TodoMainView",{
 function commitEditing(entityRef){
 	return new Promise(function(resolve, fail){
 		// Get the name/value of the elements marked by class="dx"
-		var data = d.pull(entityRef.el);		
+		var data = d.pull(entityRef.el);
+		var targetEl = d.first(entityRef.el, ".editing");
+		var prop = targetEl.getAttribute("data-prop");
 
 		// if the newSubject (in the input) is different, then, we update.
-		if (data.subject !== data.newSubject){
-			todoDso.update(entityRef.id, {subject: data.newSubject}).then(function(){
+		if (data[prop] !== data.newValue){
+			var obj = {};
+			obj[prop] = data.newValue;
+			todoDso.update(entityRef.id, obj).then(function(){
 				// NOTE: no need to remove the editing state as the list will be rebuilt. 
 				resolve();	
 			});
@@ -270,17 +275,18 @@ function cancelEditing(entityRef){
 }
 
 
-function editTodo(entityRef){
+function editTodo(entityRef, targetEl){
 	var todoEl = entityRef.el;
 
-	var labelEl = d.first(todoEl, "label");
-	var currentSubject = labelEl.innerHTML;
+	targetEl = targetEl || d.first(todoEl, "label");
+	var currentValue = targetEl.getAttribute("data-value");
 
 	todoEl.classList.add("editing");
+	targetEl.classList.add("editing");
 
 	// create the input HTML and add it to the entity element
-	var inputHTML = render("TodoMainView-input-edit", {subject: currentSubject});
-	labelEl.insertAdjacentHTML("afterend", inputHTML);
+	var inputHTML = render("TodoMainView-input-edit", {value: currentValue});
+	targetEl.insertAdjacentHTML("afterend", inputHTML);
 
 	// set the focus and selection on the input element
 	var inputEl = d.first(todoEl, "input");
